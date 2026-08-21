@@ -76,7 +76,13 @@ var AppUtils = (function () {
     for (var i = 0; i < IANA_TIMEZONES.length; i++) {
       var opt = document.createElement("option");
       opt.value = IANA_TIMEZONES[i];
-      opt.textContent = IANA_TIMEZONES[i].replace(/_/g, " ");
+      var offsetMs = getTzOffsetMs(IANA_TIMEZONES[i]);
+      var absOff = Math.abs(offsetMs);
+      var h = Math.floor(absOff / 3600000);
+      var m = Math.floor((absOff % 3600000) / 60000);
+      var sign = offsetMs >= 0 ? "+" : "-";
+      var utcLabel = m > 0 ? sign + h + ":" + String(m).padStart(2, "0") : sign + h;
+      opt.textContent = IANA_TIMEZONES[i].replace(/_/g, " ") + " (UTC" + utcLabel + ")";
       if (IANA_TIMEZONES[i] === current) opt.selected = true;
       selectEl.appendChild(opt);
     }
