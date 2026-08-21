@@ -96,15 +96,16 @@ var AppAuth = (function () {
         console.log("[AUTH] Loading profile for:", user.uid);
         loadProfile(user.uid).then(function (profile) {
           console.log("[AUTH] Profile loaded, showing tracker");
-          pageAuth.hidden = true;
+          pageAuth.style.display = "none";
+          pageTracker.style.display = "";
           pageTracker.hidden = false;
           onReady(user, profile);
         });
       } else {
         currentUser = null;
         userProfile = null;
-        pageAuth.hidden = false;
-        pageTracker.hidden = true;
+        pageAuth.style.display = "";
+        pageTracker.style.display = "none";
       }
     });
   }

@@ -343,17 +343,23 @@
   });
 
   AppAuth.initAuth(function (user, profile) {
+    console.log("[TRACKER] onReady called, uid:", user.uid);
     uid = user.uid;
     userTz = profile.timezone || "Asia/Tokyo";
     userWebhook = profile.webhookUrl || "";
     $("userEmail").textContent = user.email;
+    console.log("[TRACKER] pageAuth hidden:", pageAuth.hidden, "pageTracker hidden:", pageTracker.hidden);
 
     AppTimers.initTimers(uid, function (t) {
+      console.log("[TRACKER] Timer snapshot received");
       timers = t;
       rAll();
       checkNotifications();
     }).then(function () {
+      console.log("[TRACKER] initTimers resolved, calling rAll");
       rAll();
+    }).catch(function (err) {
+      console.error("[TRACKER] initTimers error:", err);
     });
   });
 })();
