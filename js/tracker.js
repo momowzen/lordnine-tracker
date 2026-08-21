@@ -91,23 +91,28 @@
     var list = { today: [], tomorrow: [] };
     var BOSSES = AppBosses.BOSSES;
 
-    var push = function (b, t) {
-      if (t <= n) { list.today.push({ b: b, t: t }); return; }
-      var dk = dayKey(t);
-      if (dk === tKey) list.today.push({ b: b, t: t });
-      else if (dk === tmKey) list.tomorrow.push({ b: b, t: t });
-    };
-
     for (var i = 0; i < BOSSES.length; i++) {
       var b = BOSSES[i];
       if (b.rs) {
         var et = timers[b.id] ? timers[b.id].endTime : null;
-        if (et) push(b, et);
+        if (et) {
+          var dk = dayKey(et);
+          if (dk === tKey) list.today.push({ b: b, t: et });
+          else if (dk === tmKey) list.tomorrow.push({ b: b, t: et });
+        }
       } else if (b.wr) {
         var x = AppBosses.nextSpawnAt(b, timers, n, userTz);
-        if (x && x.getTime() > n) push(b, x.getTime());
+        if (x) {
+          var dkx = dayKey(x.getTime());
+          if (dkx === tKey) list.today.push({ b: b, t: x.getTime() });
+          else if (dkx === tmKey) list.tomorrow.push({ b: b, t: x.getTime() });
+        }
         var p = AppBosses.prevSpawnSchedule(b, n, userTz);
-        if (p && n - p.getTime() <= AppBosses.SCHED_SPAWN_EXPIRE_MS) push(b, p.getTime());
+        if (p && n - p.getTime() <= AppBosses.SCHED_SPAWN_EXPIRE_MS) {
+          var dkp = dayKey(p.getTime());
+          if (dkp === tKey) list.today.push({ b: b, t: p.getTime() });
+          else if (dkp === tmKey) list.tomorrow.push({ b: b, t: p.getTime() });
+        }
       }
     }
 
@@ -128,10 +133,12 @@
           var rem2 = item.t - n;
           var cls = AppUtils.statusClassFor(rem2);
           var isInt2 = !!item.b.rs;
+          var tracked = timers[item.b.id] && timers[item.b.id].endTime;
           var setBtn = isInt2 ? '<button class="boss-card-set-btn" data-boss-id="' + item.b.id + '" data-time="' + item.t + '">SET</button>' : "";
+          var untrackBtn = isInt2 && tracked ? '<button class="boss-card-untrack" data-boss-id="' + item.b.id + '">X</button>' : "";
           h += '<div class="boss-card ' + cls + '" data-t="' + item.t + '">' +
             '<div class="boss-card-main"><span class="boss-card-name">' + item.b.name + '</span></div>' +
-            '<div class="boss-card-time"><span class="boss-card-time-value">' + (rem2 <= 0 ? "SPAWNED" : AppUtils.fmtTime(item.t, userTz)) + '</span>' + setBtn + '</div></div>';
+            '<div class="boss-card-time"><span class="boss-card-time-value">' + (rem2 <= 0 ? "SPAWNED" : AppUtils.fmtTime(item.t, userTz)) + '</span>' + setBtn + untrackBtn + '</div></div>';
         }
         h += '</div>';
       }
@@ -153,9 +160,18 @@
               AppDiscord.notifySet(boss, newEndTime, userTz, userWebhook);
             });
           } else if (result && result.action === "delete") {
-            AppTimers.setTimer(uid, bossId, { endTime: 0, startedAt: 0 });
+            AppTimers.untrackBoss(uid, bossId);
           }
         });
+      });
+    });
+
+    document.querySelectorAll(".boss-card-untrack").forEach(function (btn) {
+      if (btn._bound) return;
+      btn._bound = true;
+      btn.addEventListener("click", function (ev) {
+        ev.stopPropagation();
+        AppTimers.untrackBoss(uid, btn.dataset.bossId);
       });
     });
   }
@@ -340,6 +356,20 @@
     $("schedGrid").hidden = false;
     $("ivGrid").hidden = true;
     $("viewTitle").textContent = "Schedule";
+  });
+
+  $("trackBossBtn").addEventListener("click", function () {
+    var trackedIds = Object.keys(timers);
+    AppModal.openTrackModal(trackedIds).then(function (bossId) {
+      if (!bossId) return;
+      var boss = AppBosses.BOSSES.find(function (b) { return b.id === bossId; });
+      if (!boss) return;
+      if (boss.rs) {
+        AppTimers.trackBoss(uid, bossId, now()).then(function () {
+          AppDiscord.notifyKill(boss, now() + boss.rs * 1000, userTz, userWebhook);
+        });
+      }
+    });
   });
 
   AppAuth.initAuth(function (user, profile) {

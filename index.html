@@ -119,6 +119,13 @@
       </div>
     </section>
 
+    <div class="track-bar">
+      <button class="track-boss-btn" id="trackBossBtn">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"></circle><line x1="12" y1="8" x2="12" y2="16"></line><line x1="8" y1="12" x2="16" y2="12"></line></svg>
+        Track Boss
+      </button>
+    </div>
+
     <div class="dashboard-grid">
       <div class="panel">
         <div class="panel-header">
@@ -179,6 +186,20 @@
         <button class="btn-cancel" id="setModalCancel">Cancel</button>
         <button class="btn-delete" id="setModalDelete">Delete</button>
         <button class="btn-save" id="setModalSave">Save</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- TRACK BOSS MODAL -->
+  <div class="modal-overlay" id="trackModal" hidden>
+    <div class="modal-card modal-card-wide">
+      <div class="modal-header">
+        <span class="modal-title">Track a Boss</span>
+        <button class="modal-close" id="trackModalClose">&times;</button>
+      </div>
+      <div class="modal-body">
+        <input type="text" id="trackSearch" placeholder="Search bosses..." class="track-search">
+        <div class="track-boss-list" id="trackBossList"></div>
       </div>
     </div>
   </div>

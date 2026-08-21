@@ -145,6 +145,28 @@
 .empty-state { display: flex; flex-direction: column; align-items: center; gap: var(--space-3); color: var(--text-tertiary); padding: var(--space-8); }
 .empty-state p { font-size: 0.85rem; font-style: italic; }
 
+/* Track Bar */
+.track-bar { flex-shrink: 0; display: flex; justify-content: center; }
+.track-boss-btn {
+  display: inline-flex; align-items: center; gap: var(--space-2);
+  padding: var(--space-2) var(--space-5); border: 1px dashed var(--glass-border-strong);
+  border-radius: var(--radius-full); background: rgba(139,92,246,0.06);
+  color: var(--astral-purple); font-family: var(--font-display); font-size: 0.8rem;
+  font-weight: 600; letter-spacing: 0.04em; cursor: pointer;
+  transition: all var(--duration-normal) var(--ease-smooth);
+}
+.track-boss-btn svg { width: 1rem; height: 1rem; stroke-width: 2.5; }
+.track-boss-btn:hover { background: rgba(139,92,246,0.12); border-color: var(--astral-purple); box-shadow: 0 0 20px rgba(139,92,246,0.15); transform: translateY(-1px); }
+
+/* Boss card untrack button */
+.boss-card-untrack {
+  padding: 0.2rem 0.5rem; border: 1px solid rgba(239,68,68,0.2); border-radius: var(--radius-sm);
+  background: rgba(239,68,68,0.06); color: var(--danger-red); font-family: var(--font-display);
+  font-size: 0.55rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.06em;
+  cursor: pointer; transition: all var(--duration-fast) var(--ease-smooth);
+}
+.boss-card-untrack:hover { background: rgba(239,68,68,0.15); border-color: var(--danger-red); }
+
 /* Schedule */
 .schedule-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(160px, 1fr)); gap: var(--space-3); align-content: start; }
 .day-card { display: flex; flex-direction: column; gap: var(--space-2); padding: var(--space-3); border-radius: var(--radius-lg); background: rgba(255,255,255,0.02); border: 1px solid var(--glass-border); }

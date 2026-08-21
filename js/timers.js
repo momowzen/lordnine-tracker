@@ -21,6 +21,18 @@ var AppTimers = (function () {
     return db.collection("users").doc(uid).collection("timers").doc(bossId).set(data, { merge: true });
   }
 
+  function trackBoss(uid, bossId, killTimeMs) {
+    var boss = AppBosses.BOSSES.find(function (b) { return b.id === bossId; });
+    if (!boss) return Promise.reject(new Error("Boss not found"));
+    if (!boss.rs) return Promise.resolve();
+    var endTime = killTimeMs + boss.rs * 1000;
+    return setTimer(uid, bossId, { endTime: endTime, startedAt: killTimeMs });
+  }
+
+  function untrackBoss(uid, bossId) {
+    return db.collection("users").doc(uid).collection("timers").doc(bossId).delete();
+  }
+
   function loadAllTimers(uid) {
     return db.collection("users").doc(uid).collection("timers").get().then(function (snap) {
       var t = {};
@@ -43,6 +55,8 @@ var AppTimers = (function () {
   return {
     initTimers: initTimers,
     getTimers: getTimers,
-    setTimer: setTimer
+    setTimer: setTimer,
+    trackBoss: trackBoss,
+    untrackBoss: untrackBoss
   };
 })();
