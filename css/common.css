@@ -1,0 +1,90 @@
+:root {
+  --void-900: #02040a;
+  --void-800: #0a0f1a;
+  --void-700: #0f1623;
+  --void-600: #141d2e;
+  --void-500: #1b263b;
+  --astral-purple: #8b5cf6;
+  --astral-purple-dim: #5b21b6;
+  --astral-purple-glow: rgba(139, 92, 246, 0.45);
+  --electric-cyan: #22d3ee;
+  --electric-cyan-dim: #0891b2;
+  --electric-cyan-glow: rgba(34, 211, 238, 0.4);
+  --soft-gold: #f59e0b;
+  --soft-gold-dim: #b45309;
+  --soft-gold-glow: rgba(245, 158, 11, 0.4);
+  --alive-green: #34d399;
+  --alive-green-dim: #059669;
+  --alive-green-glow: rgba(52, 211, 153, 0.45);
+  --soon-orange: #fb923c;
+  --soon-orange-dim: #c2410c;
+  --soon-orange-glow: rgba(251, 146, 60, 0.45);
+  --danger-red: #ef4444;
+  --danger-red-dim: #991b1b;
+  --danger-red-glow: rgba(239, 68, 68, 0.45);
+  --killed-slate: #64748b;
+  --text-primary: #f8fafc;
+  --text-secondary: #94a3b8;
+  --text-tertiary: #64748b;
+  --text-muted: #475569;
+  --glass-bg: rgba(15, 23, 42, 0.40);
+  --glass-border: rgba(148, 163, 184, 0.08);
+  --glass-border-strong: rgba(148, 163, 184, 0.14);
+  --glass-highlight: rgba(255, 255, 255, 0.04);
+  --font-display: 'Space Grotesk', sans-serif;
+  --font-body: 'Inter', system-ui, sans-serif;
+  --radius-sm: 0.375rem;
+  --radius-md: 0.5rem;
+  --radius-lg: 0.625rem;
+  --radius-xl: 0.75rem;
+  --radius-2xl: 1rem;
+  --radius-full: 9999px;
+  --shadow-md: 0 4px 12px rgba(0,0,0,0.35);
+  --shadow-lg: 0 8px 24px rgba(0,0,0,0.45);
+  --shadow-xl: 0 16px 48px rgba(0,0,0,0.55);
+  --ease-smooth: cubic-bezier(0.4, 0, 0.2, 1);
+  --ease-spring: cubic-bezier(0.34, 1.56, 0.64, 1);
+  --duration-fast: 150ms;
+  --duration-normal: 250ms;
+  --duration-slow: 400ms;
+  --space-1: 0.25rem;
+  --space-2: 0.5rem;
+  --space-3: 0.75rem;
+  --space-4: 1rem;
+  --space-5: 1.25rem;
+  --space-6: 1.5rem;
+  --space-8: 2rem;
+}
+
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+html {
+  height: 100%;
+  color-scheme: dark;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+body {
+  min-height: 100%;
+  height: 100%;
+  overflow: hidden;
+  font-family: var(--font-body);
+  background: var(--void-900);
+  color: var(--text-primary);
+  line-height: 1.5;
+}
+
+::-webkit-scrollbar { width: 8px; height: 8px; }
+::-webkit-scrollbar-track { background: rgba(15, 42, 84, 0.55); }
+::-webkit-scrollbar-thumb { background: radial-gradient(circle, #38bdf8, #0369a1); border-radius: 50%; }
+
+*:focus-visible { outline: 2px solid var(--electric-cyan); outline-offset: 2px; border-radius: var(--radius-sm); }
+
+.bg-canvas {
+  position: fixed; inset: 0; z-index: 0; pointer-events: none;
+  background: radial-gradient(ellipse 80% 50% at 50% -10%, rgba(139,92,246,0.18), transparent),
+    radial-gradient(ellipse 60% 40% at 20% 80%, rgba(34,211,238,0.08), transparent),
+    radial-gradient(ellipse 50% 50% at 85% 60%, rgba(245,158,11,0.06), transparent),
+    linear-gradient(180deg, var(--void-900), var(--void-800) 40%, var(--void-700));
+}

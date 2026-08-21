@@ -1,0 +1,209 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, viewport-fit=cover">
+  <title>Boss Timer Tracker</title>
+  <link rel="icon" type="image/png" href="assets/logo.png">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Space+Grotesk:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="css/common.css">
+  <link rel="stylesheet" href="css/auth.css">
+  <link rel="stylesheet" href="css/tracker.css">
+  <link rel="stylesheet" href="css/modal.css">
+</head>
+<body>
+
+  <svg class="svg-defs" aria-hidden="true">
+    <defs>
+      <linearGradient id="heroGradient" x1="0%" y1="0%" x2="100%" y2="100%">
+        <stop offset="0%" stop-color="#8b5cf6" />
+        <stop offset="50%" stop-color="#f59e0b" />
+        <stop offset="100%" stop-color="#22d3ee" />
+      </linearGradient>
+    </defs>
+  </svg>
+
+  <div class="bg-canvas" aria-hidden="true"></div>
+
+  <!-- AUTH PAGE -->
+  <div class="auth-container" id="pageAuth">
+    <div class="auth-card">
+      <div class="auth-brand">
+        <h1>Boss Tracker</h1>
+        <p>Track boss spawns and notify your team</p>
+      </div>
+
+      <form id="loginForm">
+        <div class="form-group">
+          <label for="loginEmail">Email</label>
+          <input type="email" id="loginEmail" required placeholder="your@email.com">
+        </div>
+        <div class="form-group">
+          <label for="loginPassword">Password</label>
+          <input type="password" id="loginPassword" required placeholder="Password" minlength="6">
+        </div>
+        <button type="submit" class="btn-primary">Sign In</button>
+        <div class="auth-toggle">
+          Don't have an account? <button type="button" id="showRegister">Create one</button>
+        </div>
+        <div class="auth-error" id="authError"></div>
+      </form>
+
+      <form id="registerForm" hidden>
+        <div class="form-group">
+          <label for="regEmail">Email</label>
+          <input type="email" id="regEmail" required placeholder="your@email.com">
+        </div>
+        <div class="form-group">
+          <label for="regPassword">Password</label>
+          <input type="password" id="regPassword" required placeholder="Min 6 characters" minlength="6">
+        </div>
+        <div class="form-group">
+          <label for="regTimezone">Time Zone</label>
+          <select id="regTimezone"></select>
+        </div>
+        <button type="submit" class="btn-primary">Create Account</button>
+        <div class="auth-toggle">
+          Already have an account? <button type="button" id="showLogin">Sign in</button>
+        </div>
+        <div class="auth-error" id="authError2"></div>
+        <div class="auth-success" id="authSuccess"></div>
+      </form>
+    </div>
+  </div>
+
+  <!-- TRACKER PAGE -->
+  <div class="tracker-app" id="pageTracker" hidden>
+    <header class="tracker-header">
+      <div class="brand">
+        <img src="assets/logo.png" alt="" class="brand-logo">
+        <span class="brand-text">Boss Tracker</span>
+      </div>
+      <div class="header-actions">
+        <span class="user-email" id="userEmail"></span>
+        <button class="icon-btn" id="settingsBtn" title="Settings">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"></circle><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06A1.65 1.65 0 0 0 4.68 15a1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06A1.65 1.65 0 0 0 9 4.68a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06A1.65 1.65 0 0 0 19.4 9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"></path></svg>
+        </button>
+        <button class="icon-btn" id="logoutBtn" title="Logout">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"></path><polyline points="16 17 21 12 16 7"></polyline><line x1="21" y1="12" x2="9" y2="12"></line></svg>
+        </button>
+      </div>
+    </header>
+
+    <section class="hero-next" aria-label="Next spawn">
+      <div class="hero-status-ring" aria-hidden="true">
+        <div class="center-glow"></div>
+        <img class="hero-boss-img" id="heroBossImg" alt="">
+        <svg viewBox="0 0 100 100">
+          <circle class="track" cx="50" cy="50" r="44"></circle>
+          <circle class="progress" id="heroProgress" cx="50" cy="50" r="44" stroke-dasharray="276.46" stroke-dashoffset="276.46"></circle>
+        </svg>
+      </div>
+      <div class="hero-info">
+        <div class="hero-label">Next Spawn</div>
+        <h1 class="hero-name" id="nextName">--</h1>
+        <div class="hero-meta">
+          <span class="hero-lv" id="nextLv"></span>
+          <span class="hero-tag" id="nextTag"></span>
+        </div>
+        <div class="hero-at" id="nextAt"></div>
+      </div>
+      <div class="hero-actions">
+        <div class="hero-countdown">
+          <div class="hero-countdown-value" id="nextCd">--:--:--</div>
+          <div class="hero-countdown-label">Time Remaining</div>
+        </div>
+        <button class="hero-kill-btn" id="heroKillBtn" hidden>KILL</button>
+      </div>
+    </section>
+
+    <div class="dashboard-grid">
+      <div class="panel">
+        <div class="panel-header">
+          <div class="panel-title">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"></circle><polyline points="12 6 12 12 16 14"></polyline></svg>
+            <span id="upcomingLbl">Today</span>
+          </div>
+          <div class="segmented" role="tablist" aria-label="Upcoming view">
+            <button type="button" class="seg-btn active" id="upTodayBtn" data-upview="today" role="tab">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="4"></circle><path d="M12 2v2"></path><path d="M12 20v2"></path><path d="m4.93 4.93 1.41 1.41"></path><path d="m17.66 17.66 1.41 1.41"></path><path d="M2 12h2"></path><path d="M20 12h2"></path><path d="m6.34 17.66-1.41 1.41"></path><path d="m19.07 4.93-1.41 1.41"></path></svg>
+              <span>Today</span>
+            </button>
+            <button type="button" class="seg-btn" id="upTmrwBtn" data-upview="tomorrow" role="tab">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3a6 6 0 0 0 9 9 9 9 0 1 1-9-9Z"></path></svg>
+              <span>Tomorrow</span>
+            </button>
+          </div>
+        </div>
+        <div class="panel-body" id="upcomingList"></div>
+        <div class="panel-body" id="upcomingTmrw" hidden></div>
+      </div>
+
+      <div class="panel">
+        <div class="panel-header">
+          <div class="panel-title">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"></circle><polyline points="12 6 12 12 16 14"></polyline></svg>
+            <span id="viewTitle">Interval</span>
+          </div>
+          <div class="segmented" role="tablist" aria-label="View mode">
+            <button type="button" class="seg-btn active" id="ivBtn" data-view="interval" role="tab">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12a9 9 0 1 1-6.219-8.56"></path></svg>
+              <span>Interval</span>
+            </button>
+            <button type="button" class="seg-btn" id="schedBtn" data-view="schedule" role="tab">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect><line x1="16" y1="2" x2="16" y2="6"></line><line x1="8" y1="2" x2="8" y2="6"></line><line x1="3" y1="10" x2="21" y2="10"></line></svg>
+              <span>Schedule</span>
+            </button>
+          </div>
+        </div>
+        <div class="panel-body" id="ivGrid"></div>
+        <div class="panel-body" id="schedGrid" hidden></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- SET MODAL -->
+  <div class="modal-overlay" id="setModal" hidden>
+    <div class="modal-card">
+      <div class="modal-header">
+        <span class="modal-title" id="setModalTitle">Set Kill Time</span>
+        <button class="modal-close" id="setModalClose">&times;</button>
+      </div>
+      <div class="modal-body">
+        <label for="setModalDatetime">Kill Time</label>
+        <input type="datetime-local" id="setModalDatetime">
+      </div>
+      <div class="modal-actions">
+        <button class="btn-cancel" id="setModalCancel">Cancel</button>
+        <button class="btn-delete" id="setModalDelete">Delete</button>
+        <button class="btn-save" id="setModalSave">Save</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- SETTINGS MODAL -->
+  <div class="modal-overlay" id="settingsModal" hidden>
+    <div class="modal-card">
+      <div class="modal-header">
+        <span class="modal-title">Settings</span>
+        <button class="modal-close" id="settingsModalClose">&times;</button>
+      </div>
+      <div class="modal-body">
+        <label for="settingsTimezone">Time Zone</label>
+        <select id="settingsTimezone"></select>
+        <label for="settingsWebhook">Discord Webhook URL</label>
+        <input type="url" id="settingsWebhook" placeholder="https://discord.com/api/webhooks/...">
+        <span class="webhook-hint">Leave empty to disable notifications</span>
+      </div>
+      <div class="modal-actions">
+        <button class="btn-cancel" id="settingsCancel">Cancel</button>
+        <button class="btn-save" id="settingsSave">Save</button>
+      </div>
+    </div>
+  </div>
+
+  <script type="module" src="js/tracker.js"></script>
+</body>
+</html>
