@@ -41,9 +41,17 @@
   background: linear-gradient(135deg, var(--astral-purple), var(--electric-cyan-dim));
   color: white; font-family: var(--font-display); font-size: 0.9rem; font-weight: 600;
   cursor: pointer; letter-spacing: 0.04em; transition: opacity var(--duration-normal), transform var(--duration-normal);
+  position: relative;
 }
 .btn-primary:hover { opacity: 0.9; transform: translateY(-1px); }
 .btn-primary:active { transform: translateY(0); }
+.btn-primary.loading { pointer-events: none; color: transparent; }
+.btn-primary.loading::after {
+  content: ''; position: absolute; top: 50%; left: 50%; width: 1.25rem; height: 1.25rem;
+  margin: -0.625rem 0 0 -0.625rem; border: 2px solid rgba(255,255,255,0.3);
+  border-top-color: #fff; border-radius: 50%; animation: spin 0.6s linear infinite;
+}
+@keyframes spin { to { transform: rotate(360deg); } }
 
 .auth-toggle {
   text-align: center; margin-top: 1rem; font-size: 0.85rem; color: var(--text-tertiary);

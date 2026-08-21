@@ -37,11 +37,16 @@ var AppAuth = (function () {
   loginForm.addEventListener("submit", function (e) {
     e.preventDefault();
     loginError.textContent = "";
+    var btn = loginForm.querySelector(".btn-primary");
+    btn.classList.add("loading");
+    btn.disabled = true;
     var email = document.getElementById("loginEmail").value.trim();
     var password = document.getElementById("loginPassword").value;
     auth.signInWithEmailAndPassword(email, password).then(function (cred) {
     }).catch(function (err) {
       loginError.textContent = err.message.replace("Firebase: ", "");
+      btn.classList.remove("loading");
+      btn.disabled = false;
     });
   });
 
