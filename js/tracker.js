@@ -134,18 +134,19 @@
           var cls = AppUtils.statusClassFor(rem2);
           var isInt2 = !!item.b.rs;
           var tracked = timers[item.b.id] && timers[item.b.id].endTime;
-          var setBtn = isInt2 ? '<button class="boss-card-set-btn" data-boss-id="' + item.b.id + '" data-time="' + item.t + '">SET</button>' : "";
-          var untrackBtn = isInt2 && tracked ? '<button class="boss-card-untrack" data-boss-id="' + item.b.id + '">X</button>' : "";
+          var setBtn = isInt2 ? '<button class="boss-card-icon-btn set-btn" data-boss-id="' + item.b.id + '" data-time="' + item.t + '"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"></circle><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83-2.83l.06-.06A1.65 1.65 0 0 0 4.68 15a1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 2.83-2.83l.06.06A1.65 1.65 0 0 0 9 4.68a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 2.83l-.06.06A1.65 1.65 0 0 0 19.4 9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"></path></svg></button>' : "";
+          var untrackBtn = isInt2 && tracked ? '<button class="boss-card-icon-btn untrack-btn" data-boss-id="' + item.b.id + '"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg></button>' : "";
           h += '<div class="boss-card ' + cls + '" data-t="' + item.t + '">' +
             '<div class="boss-card-main"><span class="boss-card-name">' + item.b.name + '</span></div>' +
-            '<div class="boss-card-time"><span class="boss-card-time-value">' + (rem2 <= 0 ? "SPAWNED" : AppUtils.fmtTime(item.t, userTz)) + '</span>' + setBtn + untrackBtn + '</div></div>';
+            '<div class="boss-card-time">' + setBtn + untrackBtn +
+            '<span class="boss-card-time-value">' + (rem2 <= 0 ? "SPAWNED" : AppUtils.fmtTime(item.t, userTz)) + '</span></div></div>';
         }
         h += '</div>';
       }
       if (h !== lastUpHtml[v]) { e.innerHTML = h; lastUpHtml[v] = h; }
     }
 
-    document.querySelectorAll(".boss-card-set-btn").forEach(function (btn) {
+    document.querySelectorAll(".boss-card-icon-btn.set-btn").forEach(function (btn) {
       if (btn._bound) return;
       btn._bound = true;
       btn.addEventListener("click", function (ev) {
@@ -166,7 +167,7 @@
       });
     });
 
-    document.querySelectorAll(".boss-card-untrack").forEach(function (btn) {
+    document.querySelectorAll(".boss-card-icon-btn.untrack-btn").forEach(function (btn) {
       if (btn._bound) return;
       btn._bound = true;
       btn.addEventListener("click", function (ev) {

@@ -94,6 +94,7 @@
   gap: var(--space-3); padding: var(--space-4) var(--space-5) var(--space-3);
   border-bottom: 1px solid var(--glass-border);
 }
+.panel-header-actions { display: flex; align-items: center; gap: var(--space-2); flex-shrink: 0; }
 .panel-title { display: flex; align-items: center; gap: var(--space-2); font-family: var(--font-display); font-size: 0.75rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.1em; color: var(--text-secondary); }
 .panel-title svg { width: 1rem; height: 1rem; color: var(--astral-purple); stroke-width: 2; }
 
@@ -115,7 +116,7 @@
 /* Boss Cards */
 .boss-list { display: flex; flex-direction: column; gap: var(--space-2); }
 .boss-card {
-  display: flex; align-items: center; justify-content: space-between; gap: var(--space-3);
+  display: flex; align-items: center; gap: var(--space-2);
   padding: var(--space-3) var(--space-4); border-radius: var(--radius-lg);
   background: rgba(255,255,255,0.02); border: 1px solid transparent;
   transition: all var(--duration-normal) var(--ease-smooth); position: relative; overflow: hidden;
@@ -124,16 +125,8 @@
 .boss-card:hover { background: rgba(255,255,255,0.04); border-color: var(--glass-border-strong); box-shadow: var(--shadow-md); }
 .boss-card-main { display: flex; flex-direction: column; gap: var(--space-1); min-width: 0; flex: 1; }
 .boss-card-name { font-family: var(--font-display); font-size: 0.95rem; font-weight: 600; color: var(--text-primary); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
-.boss-card-time { display: flex; flex-direction: column; align-items: flex-end; gap: var(--space-1); flex-shrink: 0; }
-.boss-card-time-value { font-family: var(--font-display); font-size: 1rem; font-weight: 700; color: var(--status-color, var(--text-secondary)); font-variant-numeric: tabular-nums; }
-
-.boss-card-set-btn {
-  padding: 0.2rem 0.6rem; border: 1px solid var(--glass-border-strong); border-radius: var(--radius-sm);
-  background: rgba(139,92,246,0.1); color: var(--astral-purple); font-family: var(--font-display);
-  font-size: 0.6rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.06em;
-  cursor: pointer; transition: all var(--duration-fast) var(--ease-smooth);
-}
-.boss-card-set-btn:hover { background: rgba(139,92,246,0.2); border-color: var(--astral-purple); }
+.boss-card-time { display: flex; align-items: center; gap: 0.35rem; flex-shrink: 0; }
+.boss-card-time-value { font-family: var(--font-display); font-size: 1rem; font-weight: 700; color: var(--status-color, var(--text-secondary)); font-variant-numeric: tabular-nums; white-space: nowrap; }
 
 .status-alive { --status-color: var(--alive-green); }
 .status-soon { --status-color: var(--soon-orange); }
@@ -145,27 +138,28 @@
 .empty-state { display: flex; flex-direction: column; align-items: center; gap: var(--space-3); color: var(--text-tertiary); padding: var(--space-8); }
 .empty-state p { font-size: 0.85rem; font-style: italic; }
 
-/* Track Bar */
-.track-bar { flex-shrink: 0; display: flex; justify-content: center; }
+/* Track Boss Button (in panel header) */
 .track-boss-btn {
-  display: inline-flex; align-items: center; gap: var(--space-2);
-  padding: var(--space-2) var(--space-5); border: 1px dashed var(--glass-border-strong);
+  display: inline-flex; align-items: center; gap: 0.3rem;
+  padding: 0.3rem 0.75rem; border: 1px dashed var(--glass-border-strong);
   border-radius: var(--radius-full); background: rgba(139,92,246,0.06);
-  color: var(--astral-purple); font-family: var(--font-display); font-size: 0.8rem;
-  font-weight: 600; letter-spacing: 0.04em; cursor: pointer;
-  transition: all var(--duration-normal) var(--ease-smooth);
+  color: var(--astral-purple); font-family: var(--font-display); font-size: 0.65rem;
+  font-weight: 600; letter-spacing: 0.04em; cursor: pointer; white-space: nowrap;
+  transition: all var(--duration-normal) var(--ease-smooth); flex-shrink: 0;
 }
-.track-boss-btn svg { width: 1rem; height: 1rem; stroke-width: 2.5; }
-.track-boss-btn:hover { background: rgba(139,92,246,0.12); border-color: var(--astral-purple); box-shadow: 0 0 20px rgba(139,92,246,0.15); transform: translateY(-1px); }
+.track-boss-btn svg { width: 0.8rem; height: 0.8rem; stroke-width: 2.5; }
+.track-boss-btn:hover { background: rgba(139,92,246,0.12); border-color: var(--astral-purple); box-shadow: 0 0 16px rgba(139,92,246,0.15); }
 
-/* Boss card untrack button */
-.boss-card-untrack {
-  padding: 0.2rem 0.5rem; border: 1px solid rgba(239,68,68,0.2); border-radius: var(--radius-sm);
-  background: rgba(239,68,68,0.06); color: var(--danger-red); font-family: var(--font-display);
-  font-size: 0.55rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.06em;
-  cursor: pointer; transition: all var(--duration-fast) var(--ease-smooth);
+/* Boss card icon buttons */
+.boss-card-icon-btn {
+  appearance: none; border: none; background: rgba(255,255,255,0.04);
+  color: var(--text-tertiary); width: 1.4rem; height: 1.4rem; border-radius: var(--radius-sm);
+  display: inline-flex; align-items: center; justify-content: center; cursor: pointer; flex-shrink: 0;
+  transition: all var(--duration-fast) var(--ease-smooth);
 }
-.boss-card-untrack:hover { background: rgba(239,68,68,0.15); border-color: var(--danger-red); }
+.boss-card-icon-btn svg { width: 0.75rem; height: 0.75rem; stroke-width: 2; }
+.boss-card-icon-btn.set-btn:hover { color: var(--astral-purple); background: rgba(139,92,246,0.12); }
+.boss-card-icon-btn.untrack-btn:hover { color: var(--danger-red); background: rgba(239,68,68,0.12); }
 
 /* Schedule */
 .schedule-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(160px, 1fr)); gap: var(--space-3); align-content: start; }
