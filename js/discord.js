@@ -1,7 +1,7 @@
-import { sendWebhook } from "./discord.js";
+import { sendWebhook } from "./webhook-proxy.js";
 import { BOSSES } from "./bosses.js";
 
-const WEBHOOK_PROXY_URL = "https://boss-tracker-webhook.arianthonyungsod.workers.dev";
+const WEBHOOK_PROXY_URL = "https://lordninetracker.tadatokih.workers.dev";
 
 async function notifyKill(boss, nextRespawnMs, tz, webhookUrl) {
   if (!webhookUrl) return;
