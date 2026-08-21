@@ -73,6 +73,10 @@ var AppAuth = (function () {
         userProfile = { id: uid, email: "", timezone: "Asia/Tokyo", webhookUrl: "" };
       }
       return userProfile;
+    }).catch(function (err) {
+      console.warn("Firestore read failed, using defaults:", err);
+      userProfile = { id: uid, email: "", timezone: "Asia/Tokyo", webhookUrl: "" };
+      return userProfile;
     });
   }
 

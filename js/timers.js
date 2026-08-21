@@ -10,6 +10,8 @@ var AppTimers = (function () {
         snap.forEach(function (d) { t[d.id] = d.data(); });
         timers = t;
         onUpdate(timers);
+      }, function (err) {
+        console.warn("Firestore listener failed:", err);
       });
   }
 
@@ -24,6 +26,10 @@ var AppTimers = (function () {
       var t = {};
       snap.forEach(function (d) { t[d.id] = d.data(); });
       timers = t;
+      return timers;
+    }).catch(function (err) {
+      console.warn("Failed to load timers:", err);
+      timers = {};
       return timers;
     });
   }
