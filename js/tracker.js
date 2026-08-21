@@ -22,11 +22,6 @@
           if (!bs || tm.endTime > bs.getTime()) {
             bs = new Date(tm.endTime); bb = b; bAlive = true;
           }
-        } else {
-          var n = AppBosses.nextSpawnAt(b, timers, cn, userTz);
-          if (n && n.getTime() > cn && (!bAlive && (!bs || n.getTime() < bs.getTime()))) {
-            bs = n; bb = b; bAlive = false;
-          }
         }
       } else if (b.wr) {
         var p = AppBosses.prevSpawnSchedule(b, cn, userTz);
@@ -34,10 +29,22 @@
           if (!bs || p.getTime() > bs.getTime()) {
             bs = p; bb = b; bAlive = true;
           }
-        } else if (!bAlive) {
+        }
+      }
+    }
+
+    if (!bAlive) {
+      for (var i = 0; i < BOSSES.length; i++) {
+        var b = BOSSES[i];
+        if (b.rs) {
+          var n = AppBosses.nextSpawnAt(b, timers, cn, userTz);
+          if (n && n.getTime() > cn && (!bs || n.getTime() < bs.getTime())) {
+            bs = n; bb = b;
+          }
+        } else if (b.wr) {
           var x = AppBosses.nextSpawnSchedule(b, cn, userTz);
           if (x && x.getTime() > cn && (!bs || x.getTime() < bs.getTime())) {
-            bs = x; bb = b; bAlive = false;
+            bs = x; bb = b;
           }
         }
       }
@@ -316,13 +323,14 @@
   function tick() {
     if (document.hidden) return;
     expireSchedSpawn();
+    rNext();
     visualRefresh();
     rNextCd();
     checkNotifications();
   }
   setInterval(tick, 1000);
   document.addEventListener("visibilitychange", function () {
-    if (!document.hidden) { expireSchedSpawn(); visualRefresh(); rNextCd(); }
+    if (!document.hidden) { expireSchedSpawn(); rNext(); visualRefresh(); rNextCd(); }
   });
 
   $("heroKillBtn").addEventListener("click", function () {
