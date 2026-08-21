@@ -1,41 +1,42 @@
-import { db } from "./firebase-config.js";
-import {
-  collection, doc, getDocs, setDoc, onSnapshot
-} from "firebase/firestore";
-import { BOSSES } from "./bosses.js";
+var AppTimers = (function () {
+  var timers = {};
+  var unsubscribeTimers = null;
 
-let timers = {};
-let unsubscribeTimers = null;
+  function listenUserTimers(uid, onUpdate) {
+    if (unsubscribeTimers) unsubscribeTimers();
+    unsubscribeTimers = db.collection("users").doc(uid).collection("timers")
+      .onSnapshot(function (snap) {
+        var t = {};
+        snap.forEach(function (d) { t[d.id] = d.data(); });
+        timers = t;
+        onUpdate(timers);
+      });
+  }
 
-function listenUserTimers(uid, onUpdate) {
-  if (unsubscribeTimers) unsubscribeTimers();
-  const timersRef = collection(db, "users", uid, "timers");
-  unsubscribeTimers = onSnapshot(timersRef, (snap) => {
-    const t = {};
-    snap.forEach(d => { t[d.id] = d.data(); });
-    timers = t;
-    onUpdate(timers);
-  });
-}
+  function getTimers() { return timers; }
 
-function getTimers() { return timers; }
+  function setTimer(uid, bossId, data) {
+    return db.collection("users").doc(uid).collection("timers").doc(bossId).set(data, { merge: true });
+  }
 
-async function setTimer(uid, bossId, data) {
-  const ref = doc(db, "users", uid, "timers", bossId);
-  await setDoc(ref, data, { merge: true });
-}
+  function loadAllTimers(uid) {
+    return db.collection("users").doc(uid).collection("timers").get().then(function (snap) {
+      var t = {};
+      snap.forEach(function (d) { t[d.id] = d.data(); });
+      timers = t;
+      return timers;
+    });
+  }
 
-async function loadAllTimers(uid) {
-  const snap = await getDocs(collection(db, "users", uid, "timers"));
-  const t = {};
-  snap.forEach(d => { t[d.id] = d.data(); });
-  timers = t;
-  return timers;
-}
+  function initTimers(uid, onUpdate) {
+    return loadAllTimers(uid).then(function () {
+      listenUserTimers(uid, onUpdate);
+    });
+  }
 
-async function initTimers(uid, onUpdate) {
-  await loadAllTimers(uid);
-  listenUserTimers(uid, onUpdate);
-}
-
-export { initTimers, getTimers, setTimer, timers };
+  return {
+    initTimers: initTimers,
+    getTimers: getTimers,
+    setTimer: setTimer
+  };
+})();

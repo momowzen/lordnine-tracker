@@ -1,11 +1,13 @@
-export async function sendWebhook(proxyUrl, webhookUrl, content) {
-  try {
-    await fetch(proxyUrl, {
+var AppWebhook = (function () {
+  function sendWebhook(proxyUrl, webhookUrl, content) {
+    return fetch(proxyUrl, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ webhookUrl, content })
+      body: JSON.stringify({ webhookUrl: webhookUrl, content: content })
+    }).catch(function (e) {
+      console.error("Webhook failed:", e);
     });
-  } catch (e) {
-    console.error("Webhook failed:", e);
   }
-}
+
+  return { sendWebhook: sendWebhook };
+})();

@@ -1,36 +1,40 @@
-import { sendWebhook } from "./webhook-proxy.js";
-import { BOSSES } from "./bosses.js";
+var AppDiscord = (function () {
+  var WEBHOOK_PROXY_URL = "https://lordninetracker.tadatokih.workers.dev";
 
-const WEBHOOK_PROXY_URL = "https://lordninetracker.tadatokih.workers.dev";
+  function notifyKill(boss, nextRespawnMs, tz, webhookUrl) {
+    if (!webhookUrl) return Promise.resolve();
+    var next = new Date(nextRespawnMs).toLocaleString("en-US", {
+      month: "short", day: "numeric", hour: "2-digit", minute: "2-digit", hour12: true, timeZone: tz
+    });
+    var content = "**" + boss.name + "** has been defeated.\nNext respawn: " + next;
+    return AppWebhook.sendWebhook(WEBHOOK_PROXY_URL, webhookUrl, content);
+  }
 
-async function notifyKill(boss, nextRespawnMs, tz, webhookUrl) {
-  if (!webhookUrl) return;
-  const next = new Date(nextRespawnMs).toLocaleString("en-US", {
-    month: "short", day: "numeric", hour: "2-digit", minute: "2-digit", hour12: true, timeZone: tz
-  });
-  const content = `**${boss.name}** has been defeated.\nNext respawn: ${next}`;
-  await sendWebhook(WEBHOOK_PROXY_URL, webhookUrl, content);
-}
+  function notifySet(boss, nextRespawnMs, tz, webhookUrl) {
+    if (!webhookUrl) return Promise.resolve();
+    var next = new Date(nextRespawnMs).toLocaleString("en-US", {
+      month: "short", day: "numeric", hour: "2-digit", minute: "2-digit", hour12: true, timeZone: tz
+    });
+    var content = "**" + boss.name + "** manually set.\nNext respawn: " + next;
+    return AppWebhook.sendWebhook(WEBHOOK_PROXY_URL, webhookUrl, content);
+  }
 
-async function notifySet(boss, nextRespawnMs, tz, webhookUrl) {
-  if (!webhookUrl) return;
-  const next = new Date(nextRespawnMs).toLocaleString("en-US", {
-    month: "short", day: "numeric", hour: "2-digit", minute: "2-digit", hour12: true, timeZone: tz
-  });
-  const content = `**${boss.name}** manually set.\nNext respawn: ${next}`;
-  await sendWebhook(WEBHOOK_PROXY_URL, webhookUrl, content);
-}
+  function notifyRespawning5(boss, webhookUrl) {
+    if (!webhookUrl) return Promise.resolve();
+    var content = "**" + boss.name + "** will respawn in 5 minutes.\nPrepare for battle!\n@here";
+    return AppWebhook.sendWebhook(WEBHOOK_PROXY_URL, webhookUrl, content);
+  }
 
-async function notifyRespawning5(boss, webhookUrl) {
-  if (!webhookUrl) return;
-  const content = `**${boss.name}** will respawn in 5 minutes.\nPrepare for battle!\n@here`;
-  await sendWebhook(WEBHOOK_PROXY_URL, webhookUrl, content);
-}
+  function notifyRespawned(boss, webhookUrl) {
+    if (!webhookUrl) return Promise.resolve();
+    var content = "**" + boss.name + "** has respawned!";
+    return AppWebhook.sendWebhook(WEBHOOK_PROXY_URL, webhookUrl, content);
+  }
 
-async function notifyRespawned(boss, webhookUrl) {
-  if (!webhookUrl) return;
-  const content = `**${boss.name}** has respawned!`;
-  await sendWebhook(WEBHOOK_PROXY_URL, webhookUrl, content);
-}
-
-export { notifyKill, notifySet, notifyRespawning5, notifyRespawned };
+  return {
+    notifyKill: notifyKill,
+    notifySet: notifySet,
+    notifyRespawning5: notifyRespawning5,
+    notifyRespawned: notifyRespawned
+  };
+})();
