@@ -264,23 +264,45 @@
     for (var i = 0; i < BOSSES.length; i++) {
       var b = BOSSES[i];
       var tm = timers[b.id];
-      if (!tm || !tm.endTime) continue;
-      var rem = tm.endTime - n;
-      if (rem > 0) notifArmed[b.id] = tm.endTime;
-      if (rem > 0 && rem <= 5 * 60000) {
-        var key = b.id + "_" + tm.endTime + "_respawn5";
-        if (!notifSpoken[key]) {
-          notifSpoken[key] = true;
-          AppDiscord.notifyRespawning5(b, userWebhook);
+
+      if (tm && tm.endTime) {
+        var rem = tm.endTime - n;
+        if (rem > 0) notifArmed[b.id] = tm.endTime;
+        if (rem > 0 && rem <= 5 * 60000) {
+          var key = b.id + "_" + tm.endTime + "_respawn5";
+          if (!notifSpoken[key]) {
+            notifSpoken[key] = true;
+            AppDiscord.notifyRespawning5(b, userWebhook);
+          }
+        } else if (rem <= 0 && rem > -300000) {
+          var armedEnd = notifArmed[b.id];
+          if (armedEnd === tm.endTime) {
+            var key2 = b.id + "_" + tm.endTime + "_spawned";
+            if (!notifSpoken[key2]) {
+              notifSpoken[key2] = true;
+              AppDiscord.notifyRespawned(b, userWebhook);
+              delete notifArmed[b.id];
+            }
+          }
         }
-      } else if (rem <= 0 && rem > -300000) {
-        var armedEnd = notifArmed[b.id];
-        if (armedEnd === tm.endTime) {
-          var key2 = b.id + "_" + tm.endTime + "_spawned";
-          if (!notifSpoken[key2]) {
-            notifSpoken[key2] = true;
+        continue;
+      }
+
+      if (b.wr) {
+        var next = AppBosses.nextSpawnSchedule(b, n);
+        if (!next) continue;
+        var sRem = next.getTime() - n;
+        if (sRem > 0 && sRem <= 5 * 60000) {
+          var sKey = b.id + "_" + next.getTime() + "_respawn5";
+          if (!notifSpoken[sKey]) {
+            notifSpoken[sKey] = true;
+            AppDiscord.notifyRespawning5(b, userWebhook);
+          }
+        } else if (sRem <= 0 && sRem > -AppBosses.SCHED_SPAWN_EXPIRE_MS) {
+          var sKey2 = b.id + "_" + next.getTime() + "_spawned";
+          if (!notifSpoken[sKey2]) {
+            notifSpoken[sKey2] = true;
             AppDiscord.notifyRespawned(b, userWebhook);
-            delete notifArmed[b.id];
           }
         }
       }
