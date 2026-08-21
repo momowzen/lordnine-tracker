@@ -11,14 +11,38 @@
   function now() { return Date.now(); }
 
   function rNext() {
-    var bb = null, bs = null, cn = now();
+    var bb = null, bs = null, bAlive = false, cn = now();
     var BOSSES = AppBosses.BOSSES;
+
     for (var i = 0; i < BOSSES.length; i++) {
-      var n = AppBosses.nextSpawnAt(BOSSES[i], timers, cn, userTz);
-      if (n && n.getTime() > cn && (!bs || n.getTime() < bs.getTime())) {
-        bs = n; bb = BOSSES[i];
+      var b = BOSSES[i];
+      if (b.rs) {
+        var tm = timers[b.id];
+        if (tm && tm.endTime && tm.endTime <= cn) {
+          if (!bs || tm.endTime > bs.getTime()) {
+            bs = new Date(tm.endTime); bb = b; bAlive = true;
+          }
+        } else {
+          var n = AppBosses.nextSpawnAt(b, timers, cn, userTz);
+          if (n && n.getTime() > cn && (!bAlive && (!bs || n.getTime() < bs.getTime()))) {
+            bs = n; bb = b; bAlive = false;
+          }
+        }
+      } else if (b.wr) {
+        var p = AppBosses.prevSpawnSchedule(b, cn, userTz);
+        if (p && cn - p.getTime() <= AppBosses.SCHED_SPAWN_EXPIRE_MS) {
+          if (!bs || p.getTime() > bs.getTime()) {
+            bs = p; bb = b; bAlive = true;
+          }
+        } else if (!bAlive) {
+          var x = AppBosses.nextSpawnSchedule(b, cn, userTz);
+          if (x && x.getTime() > cn && (!bs || x.getTime() < bs.getTime())) {
+            bs = x; bb = b; bAlive = false;
+          }
+        }
       }
     }
+
     if (bb && bs) {
       $("nextName").textContent = bb.name;
       $("nextLv").textContent = "Lv." + bb.lvl;
@@ -27,8 +51,8 @@
       $("nextTag").textContent = isInt ? "Interval" : "Schedule";
       $("nextTag").className = "hero-tag " + (isInt ? "interval" : "scheduled");
 
-      var rem = bs.getTime() - cn;
-      var isAlive = rem <= 0;
+      var rem = bAlive ? 0 : bs.getTime() - cn;
+      var isAlive = bAlive || rem <= 0;
       $("heroKillBtn").hidden = !isAlive;
       $("heroKillBtn").dataset.bossId = bb.id;
 
@@ -57,21 +81,23 @@
     var el = $("nextCd");
     if (nxtTime) {
       var r = Math.max(0, nxtTime.getTime() - now());
-      var text = AppUtils.fmtDur(r);
+      var isAlive = r <= 0;
+      var text = isAlive ? "SPAWNED" : AppUtils.fmtDur(r);
       if (el.textContent !== text) el.textContent = text;
-      var cls = "hero-countdown-value " + AppUtils.urgencyClass(r);
+      var cls = "hero-countdown-value " + (isAlive ? "alive" : AppUtils.urgencyClass(r));
       if (el.className !== cls) el.className = cls;
       var ring = $("heroProgress");
       if (ring) {
-        var maxSpan = 24 * 3600000;
-        if (nxtBoss) {
+        var offset = isAlive ? 0 : RING_CIRCUMFERENCE;
+        if (!isAlive && nxtBoss) {
+          var maxSpan = 24 * 3600000;
           if (nxtBoss.rs) maxSpan = nxtBoss.rs * 1000;
           else if (nxtBoss.wr) {
             var prev = AppBosses.prevSpawnSchedule(nxtBoss, nxtTime.getTime() - 1000, userTz);
             maxSpan = prev ? nxtTime.getTime() - prev.getTime() : 604800000;
           }
+          offset = RING_CIRCUMFERENCE * (1 - Math.min(1, Math.max(0, r / maxSpan)));
         }
-        var offset = RING_CIRCUMFERENCE * (1 - Math.min(1, Math.max(0, r / maxSpan)));
         if (ring.style.strokeDashoffset !== offset + "px") ring.style.strokeDashoffset = offset;
       }
     } else {
@@ -264,8 +290,7 @@
       var rem = tm.endTime - n;
       if (rem > 0) notifArmed[b.id] = tm.endTime;
       if (rem > 0 && rem <= 5 * 60000) {
-        var m = Math.ceil(rem / 60000);
-        var key = b.id + "_" + tm.endTime + "_" + m;
+        var key = b.id + "_" + tm.endTime + "_respawn5";
         if (!notifSpoken[key]) {
           notifSpoken[key] = true;
           AppDiscord.notifyRespawning5(b, userWebhook);
