@@ -98,6 +98,7 @@ var AppAuth = (function () {
       } else {
         currentUser = null;
         userProfile = null;
+        pageAuth.hidden = false;
         pageAuth.style.display = "";
         pageTracker.style.display = "none";
       }
