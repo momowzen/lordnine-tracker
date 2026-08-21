@@ -6,7 +6,7 @@
   var nxtBoss = null;
   var nxtTime = null;
   var intSortMode = "time";
-  var schedSortMode = "name";
+  var schedSortMode = "time";
 
   var $ = function (id) { return document.getElementById(id); };
   var RING_CIRCUMFERENCE = 2 * Math.PI * 44;
@@ -14,6 +14,8 @@
 
   var SVG_GEAR = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"></circle><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83-2.83l.06-.06A1.65 1.65 0 0 0 4.68 15a1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 2.83-2.83l.06.06A1.65 1.65 0 0 0 9 4.68a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 2.83l-.06.06A1.65 1.65 0 0 0 19.4 9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"></path></svg>';
   var SVG_X = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>';
+  var SVG_CLOCK = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"></circle><polyline points="12 6 12 12 16 14"></polyline></svg>';
+  var SVG_ALPHA = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><polyline points="4 7 4 4 20 4 20 7"></polyline><line x1="9" y1="20" x2="15" y2="20"></line><line x1="12" y1="4" x2="12" y2="20"></line></svg>';
 
   function rNext() {
     var bb = null, bs = null, bAlive = false, cn = now();
@@ -29,7 +31,7 @@
           }
         }
       } else if (b.wr) {
-        var p = AppBosses.prevSpawnSchedule(b, cn, userTz);
+        var p = AppBosses.prevSpawnSchedule(b, cn);
         if (p && cn - p.getTime() <= AppBosses.SCHED_SPAWN_EXPIRE_MS) {
           if (!bs || p.getTime() > bs.getTime()) {
             bs = p; bb = b; bAlive = true;
@@ -47,7 +49,7 @@
             bs = n; bb = b;
           }
         } else if (b.wr) {
-          var x = AppBosses.nextSpawnSchedule(b, cn, userTz);
+          var x = AppBosses.nextSpawnSchedule(b, cn);
           if (x && x.getTime() > cn && (!bs || x.getTime() < bs.getTime())) {
             bs = x; bb = b;
           }
@@ -111,7 +113,7 @@
           var maxSpan = 24 * 3600000;
           if (nxtBoss.rs) maxSpan = nxtBoss.rs * 1000;
           else if (nxtBoss.wr) {
-            var prev = AppBosses.prevSpawnSchedule(nxtBoss, nxtTime.getTime() - 1000, userTz);
+            var prev = AppBosses.prevSpawnSchedule(nxtBoss, nxtTime.getTime() - 1000);
             maxSpan = prev ? nxtTime.getTime() - prev.getTime() : 604800000;
           }
           offset = RING_CIRCUMFERENCE * (1 - Math.min(1, Math.max(0, r / maxSpan)));
@@ -212,8 +214,8 @@
     var bosses = AppBosses.schedBosses().slice();
     if (schedSortMode === "time") {
       bosses.sort(function (a, b) {
-        var na = AppBosses.nextSpawnSchedule(a, n, userTz);
-        var nb = AppBosses.nextSpawnSchedule(b, n, userTz);
+        var na = AppBosses.nextSpawnSchedule(a, n);
+        var nb = AppBosses.nextSpawnSchedule(b, n);
         var ta = na ? na.getTime() : Infinity;
         var tb = nb ? nb.getTime() : Infinity;
         return ta - tb;
@@ -228,14 +230,14 @@
     } else {
       for (var i = 0; i < bosses.length; i++) {
         var b = bosses[i];
-        var next = AppBosses.nextSpawnSchedule(b, n, userTz);
-        var prev = AppBosses.prevSpawnSchedule(b, n, userTz);
+        var next = AppBosses.nextSpawnSchedule(b, n);
+        var prev = AppBosses.prevSpawnSchedule(b, n);
         var isAlive = prev && n - prev.getTime() <= AppBosses.SCHED_SPAWN_EXPIRE_MS;
         var cls = isAlive ? "status-alive" : "";
         var timeText = isAlive ? "SPAWNED" : (next ? AppUtils.fmtTime(next.getTime(), userTz) : "--");
 
         var dayNames = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"];
-        var schedText = b.wr.map(function (w) { return dayNames[w.d] + " " + AppBosses.p2(w.h) + ":" + AppBosses.p2(w.m); }).join(", ");
+        var schedText = b.wr.map(function (w) { var c = AppBosses.convertWrToTz(w, userTz); return dayNames[c.d] + " " + AppBosses.p2(c.h) + ":" + AppBosses.p2(c.m); }).join(", ");
 
         h += '<div class="boss-card ' + cls + '">' +
           '<div class="boss-card-main"><span class="boss-card-name">' + b.name + '</span><span class="boss-card-sub">Lv.' + b.lvl + ' &middot; ' + schedText + '</span></div>' +
@@ -326,34 +328,18 @@
     });
   });
 
-  $("intSortNameBtn").addEventListener("click", function () {
-    intSortMode = "name";
-    $("intSortNameBtn").classList.add("active");
-    $("intSortTimeBtn").classList.remove("active");
+  $("intSortBtn").addEventListener("click", function () {
+    intSortMode = intSortMode === "time" ? "name" : "time";
+    $("intSortBtn").innerHTML = intSortMode === "time" ? SVG_CLOCK : SVG_ALPHA;
+    $("intSortBtn").title = intSortMode === "time" ? "Sort by name" : "Sort by time";
     lastIntListHtml = "";
     rIntList();
   });
 
-  $("intSortTimeBtn").addEventListener("click", function () {
-    intSortMode = "time";
-    $("intSortTimeBtn").classList.add("active");
-    $("intSortNameBtn").classList.remove("active");
-    lastIntListHtml = "";
-    rIntList();
-  });
-
-  $("schedSortNameBtn").addEventListener("click", function () {
-    schedSortMode = "name";
-    $("schedSortNameBtn").classList.add("active");
-    $("schedSortTimeBtn").classList.remove("active");
-    lastSchedListHtml = "";
-    rSchedList();
-  });
-
-  $("schedSortTimeBtn").addEventListener("click", function () {
-    schedSortMode = "time";
-    $("schedSortTimeBtn").classList.add("active");
-    $("schedSortNameBtn").classList.remove("active");
+  $("schedSortBtn").addEventListener("click", function () {
+    schedSortMode = schedSortMode === "time" ? "name" : "time";
+    $("schedSortBtn").innerHTML = schedSortMode === "time" ? SVG_CLOCK : SVG_ALPHA;
+    $("schedSortBtn").title = schedSortMode === "time" ? "Sort by name" : "Sort by time";
     lastSchedListHtml = "";
     rSchedList();
   });
