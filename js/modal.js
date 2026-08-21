@@ -39,17 +39,11 @@ var AppModal = (function () {
     }
   });
 
-  function openSetModal(bossName, tz, existingEndTime) {
+  function openSetModal(bossName, tz) {
     setModalTitle.textContent = "Set Kill Time - " + bossName;
-    if (existingEndTime && existingEndTime > Date.now()) {
-      var d = new Date(existingEndTime);
-      var local = new Date(d.getTime() - d.getTimezoneOffset() * 60000);
-      setModalDatetime.value = local.toISOString().slice(0, 16);
-    } else {
-      var now = new Date();
-      var localNow = new Date(now.getTime() - now.getTimezoneOffset() * 60000);
-      setModalDatetime.value = localNow.toISOString().slice(0, 16);
-    }
+    var now = new Date();
+    var localNow = new Date(now.getTime() - now.getTimezoneOffset() * 60000);
+    setModalDatetime.value = localNow.toISOString().slice(0, 16);
     setModal.hidden = false;
     return new Promise(function (resolve) { modalResolve = resolve; });
   }

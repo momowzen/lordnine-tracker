@@ -183,7 +183,7 @@
         var bossId = btn.dataset.bossId;
         var boss = AppBosses.BOSSES.find(function (b) { return b.id === bossId; });
         var t = parseInt(btn.dataset.time) || 0;
-        AppModal.openSetModal(boss.name, userTz, t || n).then(function (result) {
+        AppModal.openSetModal(boss.name, userTz).then(function (result) {
           if (result && result.action === "set") {
             var newEndTime = result.time + (boss.rs * 1000);
             AppTimers.setTimer(uid, bossId, { endTime: newEndTime, startedAt: result.time }).then(function () {
