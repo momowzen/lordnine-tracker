@@ -35,7 +35,11 @@ var AppAuth = (function () {
     loginError.textContent = "";
     var email = document.getElementById("loginEmail").value.trim();
     var password = document.getElementById("loginPassword").value;
-    auth.signInWithEmailAndPassword(email, password).catch(function (err) {
+    console.log("[AUTH] Attempting login with:", email);
+    auth.signInWithEmailAndPassword(email, password).then(function (cred) {
+      console.log("[AUTH] Login success:", cred.user.uid);
+    }).catch(function (err) {
+      console.error("[AUTH] Login error:", err.code, err.message);
       loginError.textContent = err.message.replace("Firebase: ", "");
     });
   });
@@ -51,7 +55,9 @@ var AppAuth = (function () {
       regError.textContent = "Password must be at least 6 characters.";
       return;
     }
+    console.log("[AUTH] Attempting registration with:", email);
     auth.createUserWithEmailAndPassword(email, password).then(function (cred) {
+      console.log("[AUTH] User created:", cred.user.uid, "writing profile...");
       return db.collection("users").doc(cred.user.uid).set({
         email: email,
         timezone: timezone,
@@ -59,8 +65,10 @@ var AppAuth = (function () {
         createdAt: Date.now()
       });
     }).then(function () {
+      console.log("[AUTH] Profile written, showing success");
       authSuccess.textContent = "Account created! Logging in...";
     }).catch(function (err) {
+      console.error("[AUTH] Registration error:", err.code, err.message);
       regError.textContent = err.message.replace("Firebase: ", "");
     });
   });
@@ -82,9 +90,12 @@ var AppAuth = (function () {
 
   function initAuth(onReady) {
     auth.onAuthStateChanged(function (user) {
+      console.log("[AUTH] Auth state changed:", user ? user.uid : "null");
       if (user) {
         currentUser = user;
+        console.log("[AUTH] Loading profile for:", user.uid);
         loadProfile(user.uid).then(function (profile) {
+          console.log("[AUTH] Profile loaded, showing tracker");
           pageAuth.hidden = true;
           pageTracker.hidden = false;
           onReady(user, profile);
