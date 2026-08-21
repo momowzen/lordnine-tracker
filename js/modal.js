@@ -27,6 +27,18 @@ var AppModal = (function () {
     if (modalResolve) modalResolve({ action: "delete" });
   });
 
+  document.getElementById("setModalClose").addEventListener("click", function () {
+    setModal.hidden = true;
+    if (modalResolve) modalResolve(null);
+  });
+
+  setModal.addEventListener("click", function (e) {
+    if (e.target === setModal) {
+      setModal.hidden = true;
+      if (modalResolve) modalResolve(null);
+    }
+  });
+
   function openSetModal(bossName, tz, existingEndTime) {
     setModalTitle.textContent = "Set Kill Time - " + bossName;
     if (existingEndTime && existingEndTime > Date.now()) {
