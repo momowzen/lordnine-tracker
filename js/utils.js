@@ -71,21 +71,26 @@ var AppUtils = (function () {
     return "";
   }
 
-  function populateTimezones(selectEl, current) {
-    selectEl.innerHTML = "";
+  function fmtUtcLabel(offsetMs) {
+    var absOff = Math.abs(offsetMs);
+    var h = Math.floor(absOff / 3600000);
+    var m = Math.floor((absOff % 3600000) / 60000);
+    var sign = offsetMs >= 0 ? "+" : "-";
+    return m > 0 ? sign + h + ":" + String(m).padStart(2, "0") : sign + h;
+  }
+
+  function populateTimezones(hiddenInput, selectedEl, listEl, current) {
+    hiddenInput.value = current || "";
+    selectedEl.textContent = current ? current.replace(/_/g, " ") : "Select timezone";
+    var html = "";
     for (var i = 0; i < IANA_TIMEZONES.length; i++) {
-      var opt = document.createElement("option");
-      opt.value = IANA_TIMEZONES[i];
-      var offsetMs = getTzOffsetMs(IANA_TIMEZONES[i]);
-      var absOff = Math.abs(offsetMs);
-      var h = Math.floor(absOff / 3600000);
-      var m = Math.floor((absOff % 3600000) / 60000);
-      var sign = offsetMs >= 0 ? "+" : "-";
-      var utcLabel = m > 0 ? sign + h + ":" + String(m).padStart(2, "0") : sign + h;
-      opt.textContent = IANA_TIMEZONES[i].replace(/_/g, " ") + " (UTC" + utcLabel + ")";
-      if (IANA_TIMEZONES[i] === current) opt.selected = true;
-      selectEl.appendChild(opt);
+      var tz = IANA_TIMEZONES[i];
+      var utcLabel = fmtUtcLabel(getTzOffsetMs(tz));
+      html += '<div class="tz-option" data-tz="' + tz + '">' +
+        '<span class="tz-option-name">' + tz.replace(/_/g, " ") + '</span>' +
+        '<span class="tz-option-offset">UTC' + utcLabel + '</span></div>';
     }
+    listEl.innerHTML = html;
   }
 
   return {

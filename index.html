@@ -61,8 +61,12 @@
           <input type="password" id="regPassword" required placeholder="Min 6 characters" minlength="6">
         </div>
         <div class="form-group">
-          <label for="regTimezone">Time Zone</label>
-          <select id="regTimezone"></select>
+          <label>Time Zone</label>
+          <div class="tz-dropdown" id="regTzDropdown">
+            <div class="tz-dropdown-selected" id="regTzSelected">Select timezone</div>
+            <div class="tz-dropdown-list" id="regTzList" hidden></div>
+          </div>
+          <input type="hidden" id="regTimezone">
         </div>
         <button type="submit" class="btn-primary">Create Account</button>
         <div class="auth-toggle">
@@ -177,8 +181,12 @@
         <button class="modal-close" id="settingsModalClose">&times;</button>
       </div>
       <div class="modal-body">
-        <label for="settingsTimezone">Time Zone</label>
-        <select id="settingsTimezone"></select>
+        <label>Time Zone</label>
+        <div class="tz-dropdown" id="tzDropdown">
+          <div class="tz-dropdown-selected" id="tzSelected">Select timezone</div>
+          <div class="tz-dropdown-list" id="tzList" hidden></div>
+        </div>
+        <input type="hidden" id="settingsTimezone">
         <label for="settingsWebhook">Discord Webhook URL</label>
         <input type="url" id="settingsWebhook" placeholder="https://discord.com/api/webhooks/...">
         <span class="webhook-hint">Leave empty to disable notifications</span>
